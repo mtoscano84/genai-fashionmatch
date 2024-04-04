@@ -167,7 +167,7 @@ if __name__ == '__main__':
   ds = Datastore(None, config_file_path)
   asyncio.run(init_database(ds))
   image_uri_list = _list_gcs_bucket_objects(catalog_repo)
-  image_uri_list_filtered = image_uri_list[:2]
+  image_uri_list_filtered = image_uri_list[:100]
   for image in image_uri_list_filtered:
     generate_and_store_image_embedding(project, location, image, image_id, ds)
     image_id = image_id + 1
