@@ -230,6 +230,58 @@ CREATE EXTENSION vector;
 exit
 ```
 
+## Initialize data in AlloyDB
+
+1. Set environment variables:
+```
+export PROJECT_ID=fashion-item-recommendation
+export REGION=us-central1
+export BUCKET_NAME=catalog-repo
+```
+
+2. Create a GCS Bucket
+```
+gcloud storage buckets create gs://$BUCKET_NAME --project=$PROJECT_ID --location=$REGION
+```
+
+3. Change into the Catalog Image Repository
+```
+cd genai-fashionmatch/images/catalog_images
+```
+
+4. Upload the catalog images from local to the GCS Bucket
+```
+gcloud storage cp * gs://$BUCKET_NAME --project=$PROJECT_ID
+```
+
+5. Make a copy of example-config.ini and name it config.ini
+```
+cd genai-fashionmatch/fashionmatch-service
+cp example-config.ini config.ini
+```
+
+6. Update config.ini with your own project and database information. Keep using 127.0.0.1 as the datastore host IP address for port forwarding.
+```
+;This module defines data access variables
+[CORE]
+PROJECT = fashion-item-recommendation
+LOCATION = us-central1
+LANDING_REPO = landing-image-repo
+CATALOG_REPO = catalog-repo
+
+[CONNECTION]
+host = 127.0.0.1
+port = 5432
+database = fashionstore
+user = postgres
+password = "my-alloydb-pass"
+```
+
+7. Install requirements and populate data into database:
+```
+source load_db.sh
+```
+
 ## Clean up resources
 Clean up after completing the demo.
 
