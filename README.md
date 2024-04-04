@@ -23,7 +23,7 @@ Deploying this demo consists of 3 steps:
 ## Before you begin
 Clone this repo to your local machine:
 ```
-git clone https://github.com/GoogleCloudPlatform/genai-databases-retrieval-app.git
+git clone https://github.com/mtoscano84/genai-fashionmatch.git
 ```
 
 ## Setting up your Database
