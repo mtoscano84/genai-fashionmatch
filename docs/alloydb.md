@@ -230,61 +230,6 @@ CREATE EXTENSION vector;
 exit
 ```
 
-## Initialize data in AlloyDB
-
-1. Set environment variables:
-```
-export PROJECT_ID=fashion-item-recommendation
-export REGION=us-central1
-export BUCKET_NAME=catalog-repo
-```
-
-2. Create a GCS Bucket
-```
-gcloud storage buckets create gs://$BUCKET_NAME --project=$PROJECT_ID --location=$REGION
-```
-
-3. Change into the Catalog Image Repository
-```
-cd fashion-item-recommendation/images/catalog_images
-```
-
-4. Upload the catalog images from local to the GCS Bucket
-```
-gcloud storage cp * gs://$BUCKET_NAME --project=$PROJECT_ID
-```
-
-5. Install requirements:
-```
-pip install -r requirements.txt
-```
-
-6. Make a copy of example-config.yml and name it config.yml.
-```
-cp example-config.yml config.yml
-```
-
-7. Update config.yml with your database information. Keep using 127.0.0.1 as the datastore host IP address for port forwarding.
-```
-host: 0.0.0.0
-datastore:
-  # Example for postgres.py provider
-  kind: "postgres"
-  host: 127.0.0.1
-  port: 5432
-  # Update this with the database name
-  database: "assistantdemo"
-  # Update with database user, the default is `postgres`
-  user: "postgres"
-  # Update with database user password
-  password: "my-alloydb-pass"
-```
-
-8. Populate data into database:
-```
-python run_database_init.py
-```
-
 ## Clean up resources
 Clean up after completing the demo.
 
