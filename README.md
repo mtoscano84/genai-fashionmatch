@@ -32,7 +32,9 @@ The retrieval service uses an interchangeable 'datastore' interface. Choose one 
 [Setting up your Database](docs/alloydb.md)
 
 ## Deploying the Recommendation Service
-Instructions for deploying the Recommendation Service
+Instructions for deploying the Recommendation Service:
+
+[Deploy the recommendation service](docs/recommendation_service.md)
 
 ## Running the Recommendation Service
 Instructions for running app locally
