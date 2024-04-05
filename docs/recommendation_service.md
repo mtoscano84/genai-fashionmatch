@@ -11,11 +11,33 @@ export BACKEND_SERVICE_NAME='fashionmatch-backend'
 export REGION='us-central1'
 export PROJECT_ID='fashion-item-recommendation'
 ```
-4. Deploy the backend cloud run service
+3. Set the variable host on the [CONNECTION] section of the config.ini file to the AlloyDB Private IP
+Get the AlloyDB Private IP
 ```
 
-
 ```
+
+Update the config.ini file
+```
+;This module defines data access variables
+[CORE]
+PROJECT = fashion-item-recommendation
+LOCATION = us-central1
+LANDING_REPO = landing-image-repo01
+CATALOG_REPO = catalog-repo
+DB_PASS = Welcome1
+DB_HOST = 127.0.0.1
+DB_NAME = fashionstore
+#SECONDS_PER_JOB = 2
+
+[CONNECTION]
+host = 10.143.0.7
+port = 5432
+database = fashionstore
+user = postgres
+password = Welcome1
+```
+
 
 1. Make sure you have a Google Cloud project and billing is enabled.
 
