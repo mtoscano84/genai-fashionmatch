@@ -39,6 +39,9 @@ class Datastore():
         self.__config.read(config_file_path)
        
     async def create_conn(self):
+        """
+        Create the DB configuration reading the parameters from the config.ini file
+        """
         self.__pool = await asyncpg.create_pool(
             host=str(self.__config.get("CONNECTION", "host")),
             user=self.__config.get("CONNECTION", "user"),
@@ -51,6 +54,9 @@ class Datastore():
         return self.__pool
     
     async def initialize_db(self):
+        """
+        Configure the vector extension and create the tables needed
+        """
         async with self.__pool.acquire() as conn:
             await conn.execute("CREATE EXTENSION IF NOT EXISTS vector")
             # If the table already exists, drop it to avoid conflicts
@@ -81,12 +87,12 @@ class Datastore():
             )
 
     async def insert_from_csv(self, csv_file_path, table_name, columns):
-        """Inserts data from a CSV file into a PostgreSQL table.
+        """
+        Inserts data from a CSV file into a PostgreSQL table.
 
-        Args:
-            csv_file_path (str): The path to the CSV file.
-            table_name (str): The name of the table to insert into.
-            columns (list): A list of column names in the CSV file (matching the table).
+        :param str csv_file_path: The path to the CSV file
+        :param str table_name: The name of the table to insert into
+        :param list columns: A list of column names in the CSV file (matching the table)
         """
 
         try:
@@ -96,11 +102,8 @@ class Datastore():
             with open(csv_file_path, 'r') as file:
                 reader = csv.DictReader(file)  # Use DictReader for matching headers
                 for row in reader:
-                    print(f"Row values: {row}")
                     values = [int(row[col]) for col in columns]
-                    print(f"Values: {values}")
                     query = f"INSERT INTO {table_name} ({column_str}) VALUES ({placeholders})"
-                    print(f"query: {query}")
                     async with self.__pool.acquire() as conn:
                         await conn.execute(query, *values)
 
@@ -108,32 +111,96 @@ class Datastore():
             print(f"Error during CSV insertion: {e}")     
 
     async def load_emb_to_db(self, table_name, image_name, image_embedding, image_id):
-        """Inserts data into the specified table.
+        """
+        Update the catalog table to include the embedding of an image
 
-        Args:
-            table_name (str): The name of the table to insert into.
-            data (dict): A dictionary containing the columns and their values.
+        :param str table_name: The path to the CSV file
+        :param str image_name: The name of the table to insert into
+        :param list image_embedding: Embedding representation of an image
+        :param int image_id: ID from the embedding image
         """
         str_image_embedding = str(image_embedding).replace("['","")
-#        query = f"INSERT INTO {table_name} (PATH, EMBEDDING) VALUES ('" + image_name + "',array" + str_image_embedding + ");"
-#        query = f"UPDATE {table_name} SET PATH = '" + image_name + "', EMBEDDING = array" + str_image_embedding + "WHERE ID = {image_id}"
-        query = f"UPDATE {table_name} SET PATH = $1, EMBEDDING = $2 WHERE ID = $3"
-        print(f"Query Update: {query}")
-#        await self.conn.execute(query, *values)  
+        query = f"UPDATE {table_name} SET PATH = $1, EMBEDDING = $2 WHERE ID = $3" 
         async with self.__pool.acquire() as conn:
             await conn.execute(query, image_name, str_image_embedding, image_id)
+
+    async def insert_emb_to_db(self, image_name, image_embedding):
+        """
+        Inserts the embedding of an input image into the image_lookup table.
+
+        :param str image_name: The name of the table to insert into
+        :param list image_embedding: Embedding representation of an image
+        """
+        str_image_embedding = str(image_embedding).replace("['","")
+        query = f"INSERT INTO image_lookup (PATH, EMBEDDING) VALUES ($1, $2)"
+        async with self.__pool.acquire() as conn:
+            await conn.execute(query, image_name, str_image_embedding)
     
-    async def get_imageid_by_image_name(self, image_name: str):
-        result = await self.__pool.fetch(
+    async def get_imageid_from_catalog(self, image_name):
+        """
+        Get the image id for a image_name from the catalog table 
+
+        :param str image_name: The name of the table to insert into
+        :param int image_id: ID from the image_name
+        """
+        result = await self.__pool.fetchrow(
             """
               SELECT ID from catalog where PATH = $1
             """,
-            image_name,
+            image_name
         )
 
         if result is None:
             return None
-        return result        
+        return result
+
+    async def get_imageid_from_lookup(self, image_name):
+        """
+        Get the image id for a image_name from the image_lookup table 
+
+        :param str image_name: The name of the table to insert into
+        :param int image_id: ID from the image_name
+        """
+        result = await self.__pool.fetchval(
+            """
+              SELECT ID from image_lookup where PATH = $1
+            """,
+            image_name
+        )
+
+        if result is None:
+            return None
+        return result
+    
+    async def image_search(self, image_id):
+        """
+        Get the top5 nearest image IDs from the catalog using a image_id from the image_lookup table
+
+        :param int image_id: ID from the image_name
+        :param list results: Lists of the top5 nearest image IDs
+        """
+        results = await self.__pool.fetch(
+            """
+            SELECT path
+            FROM
+                catalog 
+            ORDER BY
+                embedding
+            <-> 
+                (
+                SELECT embedding
+                FROM
+                image_lookup
+                WHERE
+                ID = $1)
+            LIMIT 5
+            """,
+            image_id
+        )
+
+        if results is None:
+            return None
+        return results           
 
     async def close(self):
         await self.__pool.close()

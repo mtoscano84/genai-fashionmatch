@@ -92,15 +92,16 @@ def generate_and_store_image_embedding(project, location, file_uri, image_id, ds
 
 async def _load_embedding(table_name, image_name, image_embedding,image_id, ds):
   """
-  Inserts an image embedding into a PostgreSQL database table and returns the IDs of matching entries based on the image name
+  Inserts an image embedding into a PostgreSQL database table and returns the IDs of image inserted
 
   :param str image_name: Name of the image to insert in the database
   :param list image_embedding: Embedding representation of an image
-  :return list image_id: IDs from the embedding image inserted in the database
+  :param list image_id: ID of the image_name to insert the embedding
+  :return list result: ID of the embeding image inserted
   """
   await ds.create_conn()
   await ds.load_emb_to_db(table_name, image_name, image_embedding, image_id)
-  result=await ds.get_imageid_by_image_name(image_name)
+  result=await ds.get_imageid_from_catalog(image_name)
   await ds.close()
 
   return result
@@ -154,7 +155,9 @@ def _encode_image_to_base64(image_bytes):
   return encodedString
 
 async def init_database(ds) -> None:
-#  ds = Datastore(None, config_file_path)
+  """
+  Create the table and insert the data from a csv file into the database
+  """
   columns = ['ID', 'PRICE', 'UNITS'] 
   await ds.create_conn()
   await ds.initialize_db()
