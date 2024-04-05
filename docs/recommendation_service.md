@@ -1,17 +1,25 @@
 # Deploy the Fashionmatch App on CloudRun
 
 ## Before you begin
-1. Go to the recommendation service directory
-```
-cd fashionmatch-service
-```
-2. Open a new terminal and set the following environment variables
+1. Open a new terminal and set the following environment variables
 ```
 export BACKEND_SERVICE_NAME='fashionmatch-backend'
 export REGION='us-central1'
 export PROJECT_ID='fashion-item-recommendation'
+
+2. Enable APIs:
 ```
-3. Set the variable host on the [CONNECTION] section of the config.ini file to the AlloyDB Private IP
+gcloud services enable artifactregistry.googleapis.com \
+                       cloudbuild.googleapis.com \
+                       run.googleapis.com
+```
+3. Go to the recommendation service directory
+```
+cd fashionmatch-service
+```
+
+```
+4. Set the variable host on the [CONNECTION] section of the config.ini file to the AlloyDB Private IP
 Get the AlloyDB Private IP
 ```
 
