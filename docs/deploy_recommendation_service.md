@@ -30,7 +30,9 @@ gcloud projects add-iam-policy-binding $PROJECT_ID \
     --role='roles/aiplatform.user'
 ```
 
-4. If you are under a domain restriction organization policy restricting unauthenticated invocations for your project (e.g. Argolis), you will need to temporary disable de Org Policy **iam.allowedPolicyMemberDomains**
+4. If you are under a domain restriction organization policy [restricting](https://cloud.google.com/run/docs/authenticating/public#domain-restricted-sharing) unauthenticated invocations for your project (e.g. Argolis), you will need to temporary disable de Org Policy **iam.allowedPolicyMemberDomains**
+
+![Disable Org Policy iam.allowedPolicyMemberDomains](../images/disable_orgpolicy_allowedPolicyMemberDomains.png)
 
 
 
