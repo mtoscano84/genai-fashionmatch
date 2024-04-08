@@ -1,0 +1,8 @@
+#!/Users/mtoscano/Sandbox/genai-fashionmatch/fashionmatch-service/frontend/local/local_test_env/bin/python3.12
+# -*- coding: utf-8 -*-
+import re
+import sys
+from rsa.cli import verify
+if __name__ == '__main__':
+    sys.argv[0] = re.sub(r'(-script\.pyw|\.exe)?$', '', sys.argv[0])
+    sys.exit(verify())
