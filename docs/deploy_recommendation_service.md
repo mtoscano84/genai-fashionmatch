@@ -34,7 +34,46 @@ gcloud projects add-iam-policy-binding $PROJECT_ID \
 
 ![Disable Org Policy iam.allowedPolicyMemberDomains](../images/disable_orgpolicy_allowedPolicyMemberDomains.png)
 
+Note: The organization policy should be re-established after the IAM policy assigned during the CloudRun Service deployed
 
+5. Create the GCS Bucket for the user input image:
+```
+export PROJECT_ID=fashion-item-recommendation
+export REGION=us-central1
+export BUCKET_NAME=landing-image-repo
+
+gcloud storage buckets create gs://$BUCKET_NAME --project=$PROJECT_ID --location=$REGION
+```
+
+## Deploy the backend service to CloudRun
+1. Set the variable host on the [CONNECTION] section of the config.ini file to the AlloyDB Private IP
+Get the AlloyDB Private IP
+```
+export CLUSTER=my-alloydb-cluster
+export INSTANCE=my-alloydb-instance
+
+gcloud alloydb instances describe $INSTANCE \
+    --cluster=$CLUSTER \
+    --region=$REGION \
+    --format 'value(ipAddress)'
+```
+
+Update the config.ini file
+```
+;This module defines data access variables
+[CORE]
+PROJECT = fashion-item-recommendation
+LOCATION = us-central1
+LANDING_REPO = landing-image-repo01
+CATALOG_REPO = catalog-repo
+
+[CONNECTION]
+host = 10.143.0.7
+port = 5432
+database = fashionstore
+user = postgres
+password = Welcome1
+```
 
 3. Go to the recommendation service directory
 ```
@@ -68,28 +107,3 @@ database = fashionstore
 user = postgres
 password = Welcome1
 ```
-
-
-1. Make sure you have a Google Cloud project and billing is enabled.
-
-2. Set your PROJECT_ID environment variable:
-```
-export PROJECT_ID=<YOUR_PROJECT_ID>
-```
-
-## Cloud Run
-
-3. [Install](https://cloud.google.com/sdk/docs/install) the gcloud CLI.
-
-4. Set gcloud project:
-```
-gcloud config set project $PROJECT_ID
-```
-5. Enable APIs:
-```
-gcloud services enable alloydb.googleapis.com \
-                       compute.googleapis.com \
-                       cloudresourcemanager.googleapis.com \
-                       servicenetworking.googleapis.com \
-                       vpcaccess.googleapis.com \
-                       aiplatform.googleapis.com
