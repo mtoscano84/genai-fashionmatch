@@ -47,7 +47,7 @@ To deploy the recommendation service, follow these instructions:
 Instructions for running app locally
 
 ## Clean up Resources
-Instructions for cleaning up resources
+[Instructions for cleaning up resources](./docs/clean_up.md)
 
 # Writing your own Recommendation Service
 
