@@ -6,7 +6,7 @@
 export BACKEND_SERVICE_NAME='fashionmatch-backend'
 export REGION='us-central1'
 export PROJECT_ID='fashion-item-recommendation'
-
+```
 
 2. Enable the following APIs:
 ```
@@ -29,6 +29,7 @@ gcloud projects add-iam-policy-binding $PROJECT_ID \
     --member='serviceAccount:697181134976-compute@developer.gserviceaccount.com' \
     --role='roles/aiplatform.user'
 ```
+
 4. If you are under a domain restriction organization policy restricting unauthenticated invocations for your project (e.g. Argolis), you will need to temporary disable de Org Policy **iam.allowedPolicyMemberDomains**
 
 
