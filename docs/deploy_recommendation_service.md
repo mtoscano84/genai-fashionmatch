@@ -87,6 +87,7 @@ password = Welcome1
 4. Set the service_name variable and deploy the service
 ```
 export BACKEND_SERVICE_NAME=fashionmatch-backend
+
 source deploy_backend_to_cloudrun.sh 
 ```
 
@@ -99,7 +100,8 @@ cd fashionmatch-service/frontend/cloudrun
 2. Set the service_name variable and deploy the service
 ```
 export FRONTEND_SERVICE_NAME=fashionmatch-app
-source deploy_backend_to_cloudrun.sh 
+
+source deploy_frontend_to_cloudrun.sh 
 ```
 
 3. Open a Web Browser and navegate to the Service URL from the previous step
