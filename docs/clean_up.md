@@ -28,4 +28,4 @@ through this demo.
 
 ## Delete Database resources
 
-[Clean up Alloydb](./docs/alloydb.md#clean-up-resources)
+[Clean up Alloydb](./alloydb.md#clean-up-resources)
