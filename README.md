@@ -27,14 +27,21 @@ git clone https://github.com/mtoscano84/genai-fashionmatch.git
 ```
 
 ## Setting up your Database
-The retrieval service uses an interchangeable 'datastore' interface. Choose one of any of the database's listed below to set up and initialize your database:
+The recommendation service uses a database to store the image embeddings and perform similarity searches to generate recommendations based on the catalog.
+
+Follow these instructions to set up and configure the database
 
 [Setting up your Database](docs/alloydb.md)
 
 ## Deploying the Recommendation Service
-Instructions for deploying the Recommendation Service:
+The Recommendation service is based on two Cloud Run services:
 
-[Deploy the recommendation service](docs/recommendation_service.md)
+1. **Frontend**: Manages the user interface and orchestrates the calls needed to process requests and display the recommended items.
+2. **Backend**: Orchestrates the generation of the embedding from the image provided by the user, its insertion into the database, and the similarity search to obtain the catalog items.
+
+To deploy the recommendation service, follow these instructions:
+
+[Deploy the Recommendation Service](docs/deploy_recommendation_service.md)
 
 ## Running the Recommendation Service
 Instructions for running app locally
