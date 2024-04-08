@@ -3,7 +3,6 @@
 ## Before you begin
 1. Open a terminal and set the following environment variables
 ```
-export BACKEND_SERVICE_NAME='fashionmatch-backend'
 export REGION='us-central1'
 export PROJECT_ID='fashion-item-recommendation'
 ```
@@ -16,14 +15,20 @@ gcloud services enable artifactregistry.googleapis.com \
 ```
 
 3. Grant the necessary permissions:
-- Read GCS files
+
+- Get your project number to build the default service account name in the format PROJECT_NUM-compute@developer.gserviceaccount.com
+```
+gcloud projects describe $PROJECT_ID --format="value(projectNumber)"
+```
+
+- Permissions to Read GCS files
 ```
 gcloud projects add-iam-policy-binding $PROJECT_ID \
     --member='serviceAccount:697181134976-compute@developer.gserviceaccount.com' \
     --role='roles/storage.objectUser'
 ```
 
-- Use VertexAI to generate embedding
+- Permissions to Use VertexAI to generate embedding
 ```
 gcloud projects add-iam-policy-binding $PROJECT_ID \
     --member='serviceAccount:697181134976-compute@developer.gserviceaccount.com' \
@@ -34,19 +39,23 @@ gcloud projects add-iam-policy-binding $PROJECT_ID \
 
 ![Disable Org Policy iam.allowedPolicyMemberDomains](../images/disable_orgpolicy_allowedPolicyMemberDomains.png)
 
-Note: The organization policy should be re-established after the IAM policy assigned during the CloudRun Service deployed
+**Note**: The organization policy should be re-established after the IAM policy assigned during the CloudRun Service deployed
 
 5. Create the GCS Bucket for the user input image:
 ```
-export PROJECT_ID=fashion-item-recommendation
-export REGION=us-central1
 export BUCKET_NAME=landing-image-repo
 
 gcloud storage buckets create gs://$BUCKET_NAME --project=$PROJECT_ID --location=$REGION
 ```
 
 ## Deploy the backend service to CloudRun
-1. Set the variable host on the [CONNECTION] section of the config.ini file to the AlloyDB Private IP
+1. Change to the `backend/cloudrun` directory:
+```
+cd fashionmatch-service/backend/cloudrun
+```
+
+2. Set the variable **host** on the [CONNECTION] section of the config.ini file to the AlloyDB Private IP
+
 Get the AlloyDB Private IP
 ```
 export CLUSTER=my-alloydb-cluster
@@ -68,42 +77,29 @@ LANDING_REPO = landing-image-repo01
 CATALOG_REPO = catalog-repo
 
 [CONNECTION]
-host = 10.143.0.7
+host = **10.143.0.7**
 port = 5432
 database = fashionstore
 user = postgres
 password = Welcome1
 ```
 
-3. Go to the recommendation service directory
+4. Set the service_name variable and deploy the service
 ```
-cd fashionmatch-service
-```
-
-```
-4. Set the variable host on the [CONNECTION] section of the config.ini file to the AlloyDB Private IP
-Get the AlloyDB Private IP
+export BACKEND_SERVICE_NAME=fashionmatch-backend
+source deploy_backend_to_cloudrun.sh 
 ```
 
+## Deploy the frontend service to CloudRun
+1. Change to the `backend/cloudrun` directory:
+```
+cd fashionmatch-service/frontend/cloudrun
 ```
 
-Update the config.ini file
+2. Set the service_name variable and deploy the service
 ```
-;This module defines data access variables
-[CORE]
-PROJECT = fashion-item-recommendation
-LOCATION = us-central1
-LANDING_REPO = landing-image-repo01
-CATALOG_REPO = catalog-repo
-DB_PASS = Welcome1
-DB_HOST = 127.0.0.1
-DB_NAME = fashionstore
-#SECONDS_PER_JOB = 2
+export FRONTEND_SERVICE_NAME=fashionmatch-app
+source deploy_backend_to_cloudrun.sh 
+```
 
-[CONNECTION]
-host = 10.143.0.7
-port = 5432
-database = fashionstore
-user = postgres
-password = Welcome1
-```
+3. Open a Web Browser and navegate to the Service URL from the previous step
