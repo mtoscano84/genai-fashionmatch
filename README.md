@@ -4,7 +4,15 @@ Note: This project is for demonstration only and is not an officially supported 
 
 ## Introduction
 
-This demo showcases a Fashion Item Recommendation based on image simalarity search. The application provides an user interface to upload an image and get recomended items from your catalog. The code provided here is designed to show how you can combine GenAI, VertexAI and AlloyDB to provide advanced search capabilities to your application.
+This project demonstrates how we can provide our application with advanced search capabilities based on techniques such as embeddings and vector searches to improve the user experience.
+
+The demo shows the search module of an online fashion store. The search engine is able to recommend items from our catalog based on an image provided.
+
+Specifically, the demo showcases the following:
+
+- **Image embedding**: The system extracts a vector representation (embedding) from the uploaded image.
+- **Vector search**: The system compares the extracted embedding to a database of embeddings of known items in the catalog.
+- **Recommendation**: The system recommends items that are similar to the uploaded image based on the results of the vector search.
 
 ## Table of Contents
 <!-- TOC depthfrom:2 -->
