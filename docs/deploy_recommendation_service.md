@@ -1,22 +1,38 @@
 # Deploy the Recommendation Service to CloudRun
 
-The recommendation service is based on 2 CloudRun service:
-- Frontend Service
-- Backend Service
-
 ## Before you begin
-1. Open a new terminal and set the following environment variables
+1. Open a terminal and set the following environment variables
 ```
 export BACKEND_SERVICE_NAME='fashionmatch-backend'
 export REGION='us-central1'
 export PROJECT_ID='fashion-item-recommendation'
 
-2. Enable APIs:
+
+2. Enable the following APIs:
 ```
 gcloud services enable artifactregistry.googleapis.com \
                        cloudbuild.googleapis.com \
                        run.googleapis.com
 ```
+
+3. Grant the necessary permissions:
+- Read GCS files
+```
+gcloud projects add-iam-policy-binding $PROJECT_ID \
+    --member='serviceAccount:697181134976-compute@developer.gserviceaccount.com' \
+    --role='roles/storage.objectUser'
+```
+
+- Use VertexAI to generate embedding
+```
+gcloud projects add-iam-policy-binding $PROJECT_ID \
+    --member='serviceAccount:697181134976-compute@developer.gserviceaccount.com' \
+    --role='roles/aiplatform.user'
+```
+4. If you are under a domain restriction organization policy restricting unauthenticated invocations for your project (e.g. Argolis), you will need to temporary disable de Org Policy **iam.allowedPolicyMemberDomains**
+
+
+
 3. Go to the recommendation service directory
 ```
 cd fashionmatch-service
