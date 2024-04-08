@@ -20,8 +20,8 @@ Specifically, the demo showcases the following:
 - [Introduction](#introduction)
 - [Table of Contents](#table-of-contents)
 - [Understanding the demo](#understanding-the-demo)
-    - [Understanding Retrieval Augmented Generation RAG](#understanding-retrieval-augmented-generation-rag)
-    - [Using ReACT + RAG together](#using-react--rag-together)
+    - [Understanding Image Embedding](#understanding-image-embedding)
+    - [Using Vector Search](#using-vector-search)
     - [Architecture](#architecture)
 - [Deploying](#deploying)
     - [Before you begin](#before-you-begin)
@@ -29,24 +29,43 @@ Specifically, the demo showcases the following:
     - [Deploying the Recommendation Service](#deploying-the-recomendation-service)
     - [Running the Recommendation Service](#running-the-recommendation-service)
     - [Clean up Resources](#clean-up-resources)
-- [Writing your own retrieval service](#writing-your-own-retrieval-service)
 
 <!-- /TOC -->
 
 ## Understanding the demo
+### Understanding Image Embedding
+Image embedding simplifies image analysis by converting images into numerical vectors (embeddings) that capture their visual essence. Vertex AI's Multimodal API leverages a powerful pre-trained model to generate these embeddings, enabling tasks like image classification, visual search, and content moderation.
+
+Key Benefits
+- **Powerful Pre-Trained Model**: Vertex AI's model is trained on vast datasets, giving it a deep understanding of visual concepts. This eliminates the need to train your own models from scratch.
+- **Semantic Understanding**: The model generates embeddings that capture the meaning within images, allowing for similarity comparisons that go beyond pixel-by-pixel analysis.
+- **Versatility**: The Vertex AI Multimodal API can handle images, video, and text, opening up possibilities for cross-media analysis and search.
+
+### Using Vector Search
+Vector search allows you to find items in a database that are semantically similar to a query, even if they don't share exact keywords. The pgvector extension for PostgreSQL provides tools for storing vectors, creating indexes, and performing vector search operations. AlloyDB, Google's fully-managed PostgreSQL-compatible database, offers specific optimizations for vector search, making it an excellent platform for these applications.
+
+Key Benefits of Using AlloyDB with pgvector
+- **Performance**: AlloyDB has built-in optimizations for vector search operations, allowing you to perform similarity-based searches on large datasets with incredible speed.
+- **Scalability**: AlloyDB's ability to scale seamlessly ensures that your vector search applications can handle growing data and complex queries without performance bottlenecks.
+- **Operational Simplicity**: As a fully-managed service, AlloyDB handles administration tasks, backups, and updates, letting you focus on application development and leveraging optimized vector search features.
+
 ### Architecture
-
-The diagram show the architecture of the demo
-
 ![Architecture](images/fashion_item_recommendation_app.png)
+
+This architecture provides an image-based product recommendation system. It leverages Vertex AI to analyze images and generate meaningful representations of their visual content. These representations are stored in AlloyDB for fast similarity searches, allowing the system to recommend visually similar products to users based on their image submissions.
+
+There 3 key components in this architecture: 
+- **Cloud Run**: Hosts the frontend and backend components of the recommendation service, providing a serverless platform for code execution.
+- **Vertex AI Multimodal Embedding**: Generates the image embedding from a pretrained model. Vertex AI provides a managed platform for creating, deploying, and using these multimodal embedding models.
+- **AlloyDB for PostgreSQL**: Stores the image embeddings and relevant catalog item data, providing high-performance, scalable storage, and data retrieval for recommendations.
 
 ## Deploying
 
 Deploying this demo consists of 3 steps:
 
-1. creating your database and initializing it with data
-2. Deploying your service -- deploying your recommendation service and connecting it to your database
-3. Running the Recommendation
+1. Creating your database and initializing it with data
+2. Deploying the Recommendation Service -- deploying your recommendation service and connecting it to your database
+3. Running the Recommendation Service
 
 ### Before you begin
 Clone this repo to your local machine:
@@ -76,8 +95,6 @@ Instructions for running app locally
 
 ### Clean up Resources
 [Instructions for cleaning up resources](./docs/clean_up.md)
-
-## Writing your own Recommendation Service
 
 
 
