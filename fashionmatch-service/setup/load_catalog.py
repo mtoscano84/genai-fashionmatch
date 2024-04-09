@@ -36,7 +36,7 @@ CORS(app)
 
 #Load variables
 config_file_path = "config.ini"
-csv_file_path = "../data/fashion_catalog_dataset.csv"
+csv_file_path = "../../data/fashion_catalog_dataset.csv"
 variables = ConfigParser()
 variables.read(config_file_path)
 
