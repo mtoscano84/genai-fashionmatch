@@ -262,11 +262,11 @@ gcloud storage cp * gs://$BUCKET_NAME --project=$PROJECT_ID
 
 5. Make a copy of example-config.ini and name it config.ini
 ```
-cd genai-fashionmatch/fashionmatch-service
+genai-fashionmatch/fashionmatch-service/setup
 cp example-config.ini config.ini
 ```
 
-6. Update config.ini with your own project and database information. Keep using 127.0.0.1 as the datastore host IP address for port forwarding.
+6. Update config.ini with your own project, repo names and database information. Keep using 127.0.0.1 as the datastore host IP address for port forwarding.
 ```
 ;This module defines data access variables
 [CORE]
