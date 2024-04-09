@@ -252,7 +252,7 @@ gcloud storage buckets create gs://$BUCKET_NAME --project=$PROJECT_ID --location
 
 3. Change into the Catalog Image Repository
 ```
-cd genai-fashionmatch/images/catalog_images
+cd genai-fashionmatch/data/catalog_images
 ```
 
 4. Upload the catalog images from local to the GCS Bucket
