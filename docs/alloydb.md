@@ -184,7 +184,7 @@ gcloud compute instances create $VM_INSTANCE \
 
 Connect to the VM Instance:
 ```
-export PROJECT_ID=fashion-item-recommendation
+export PROJECT_ID=genai-fashionmatch
 export ZONE=us-central1-a
 export VM_INSTANCE=alloydb-proxy-vm
 gcloud compute ssh --project=$PROJECT_ID --zone=$ZONE $VM_INSTANCE
@@ -199,7 +199,7 @@ chmod +x alloydb-auth-proxy
 export CLUSTER=my-alloydb-cluster
 export INSTANCE=my-alloydb-instance
 export REGION=us-central1
-export PROJECT_ID=fashion-item-recommendation
+export PROJECT_ID=genai-fashionmatch
 ./alloydb-auth-proxy \
   /projects/$PROJECT_ID/locations/$REGION/clusters/$CLUSTER/instances/$INSTANCE
 ```
@@ -240,7 +240,7 @@ exit
 
 1. Set environment variables:
 ```
-export PROJECT_ID=fashion-item-recommendation
+export PROJECT_ID=genai-fashionmatch
 export REGION=us-central1
 export BUCKET_NAME=catalog-repo
 ```
