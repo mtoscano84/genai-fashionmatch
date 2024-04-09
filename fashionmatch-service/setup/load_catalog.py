@@ -47,7 +47,6 @@ catalog_repo = variables.get("CORE","CATALOG_REPO")
 location = variables.get("CORE","LOCATION")
 table_name = "catalog"
 image_id = 1
-#seconds_per_job = variables.get("CORE","SECONDS_PER_JOB")
 seconds_per_job=2
 blob_uri_list = []
 
@@ -79,7 +78,6 @@ def generate_and_store_image_embedding(project, location, file_uri, image_id, ds
   image_embedding: typing.Sequence[float]
   image_emb_value = response.predictions[0]['imageEmbedding']
   image_embedding = [v for v in image_emb_value]
-  logging.info(f"Image Embedding: {image_embedding}")
   time.sleep(seconds_per_job)
   result=asyncio.run(_load_embedding(table_name,image_name,image_embedding, image_id, ds))
 
@@ -87,7 +85,7 @@ def generate_and_store_image_embedding(project, location, file_uri, image_id, ds
     logging.info("There was an error while loading the embedding to the database")
     return 0
   else:
-    logging.info("The embedding image has been loadaed in the database")
+    logging.info(f"The embedding image has been loadaed in the database: {image_name}")
     return {"ImageName": image_name}
 
 async def _load_embedding(table_name, image_name, image_embedding,image_id, ds):
