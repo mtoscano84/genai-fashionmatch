@@ -43,7 +43,7 @@ gcloud projects add-iam-policy-binding $PROJECT_ID \
 
 5. Create the GCS Bucket for the user input image:
 ```
-export BUCKET_NAME=landing-image-repo
+export BUCKET_NAME=landing-image-repo-$PROJECT_NUM
 
 gcloud storage buckets create gs://$BUCKET_NAME --project=$PROJECT_ID --location=$REGION
 ```
