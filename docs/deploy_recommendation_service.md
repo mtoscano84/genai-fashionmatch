@@ -4,7 +4,7 @@
 1. Open a terminal and set the following environment variables
 ```
 export REGION='us-central1'
-export PROJECT_ID='fashion-item-recommendation'
+export PROJECT_ID='genai-fashionmatch'
 ```
 
 2. Enable the following APIs:
