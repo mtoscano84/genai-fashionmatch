@@ -242,7 +242,7 @@ exit
 ```
 export PROJECT_ID=genai-fashionmatch
 export REGION=us-central1
-export BUCKET_NAME=catalog-repo
+export BUCKET_NAME=catalog-repo-$PROJECT_NUM
 ```
 
 2. Create a GCS Bucket
