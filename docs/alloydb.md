@@ -29,7 +29,7 @@ gcloud services enable alloydb.googleapis.com \
 7. Make sure you have python version 3.11+ installed.
 
 ```
-python -V
+python3 -V
 ```
 
 8. Download and install [postgres-client cli (psql)](https://www.timescale.com/blog/how-to-install-psql-on-mac-ubuntu-debian-windows/)
