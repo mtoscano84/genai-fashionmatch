@@ -131,7 +131,6 @@ AlloyDB supports network connectivity through private, internal IP addresses onl
 1. Set environment variables:
 ```
 export ZONE=us-central1-a
-export PROJECT_NUM=$(gcloud projects describe $PROJECT_ID --format="value(projectNumber)")
 export VM_INSTANCE=alloydb-proxy-vm
 ```
 
@@ -146,6 +145,12 @@ Set **constraints/compute.requireShieldedVm** to **Not Enforced**
 ![Disable Org Policy compute.requireShieldedVM](../images/disable_orgpolicy_requireShieldedVm.png)
 
 3. Assign the necessary roles to the default Compute Engine Service Account:
+
+Get your project number to build the default service account name in the format "$PROJECT_NUM-compute@developer.gserviceaccount.com"
+```
+gcloud projects describe $PROJECT_ID --format="value(projectNumber)"
+```
+
 ```
 gcloud projects add-iam-policy-binding $PROJECT_ID \
     --member='serviceAccount:$PROJECT_NUM-compute@developer.gserviceaccount.com' \
@@ -156,6 +161,7 @@ gcloud projects add-iam-policy-binding $PROJECT_ID \
      --role='roles/serviceusage.serviceUsageConsumer'
 
 ```  
+
 4. Create a Compute Engine VM:
 ```
 gcloud compute instances create $VM_INSTANCE \
