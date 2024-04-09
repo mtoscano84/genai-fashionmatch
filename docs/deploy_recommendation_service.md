@@ -91,17 +91,41 @@ export BACKEND_SERVICE_NAME=fashionmatch-backend
 source deploy_backend_to_cloudrun.sh 
 ```
 
+Output:
+```
+[....]                                                                                                                                                                                           
+Done.                                                                                                                                                                                                                 
+Service [fashionmatch-backend] revision [fashionmatch-backend-00002-zvq] has been deployed and is serving 100 percent of traffic.
+Service URL: https://fashionmatch-backend-7cqkbo2tjq-uc.a.run.app
+```
+Note the Service URL for later use
+
 ## Deploy the frontend service to CloudRun
 1. Change to the `backend/cloudrun` directory:
 ```
 cd fashionmatch-service/frontend/cloudrun
 ```
 
-2. Set the service_name variable and deploy the service
+2. Edit the main.py file and update the variable **API_URL** with the Service URL that you get from the previous section
+```
+[....]   
+API_URL="https://fashionmatch-backend-7cqkbo2tjq-uc.a.run.app"
+GEN_DATA_EMB="/find_similar_images"
+[....]
+```
+
+3. Set the service_name variable and deploy the service
 ```
 export FRONTEND_SERVICE_NAME=fashionmatch-app
 
 source deploy_frontend_to_cloudrun.sh 
 ```
+Output:
+```
+[....]                                                                                                                                                                                           
+Done.                                                                                                                                                                                                                 
+Service [fashionmatch-app] revision [fashionmatch-app-00003-p22] has been deployed and is serving 100 percent of traffic.
+Service URL: https://fashionmatch-app-7cqkbo2tjq-uc.a.run.app
+```
 
-3. Open a Web Browser and navegate to the Service URL from the previous step
+4. Open a Web Browser and use the Service URL to connect to the App
