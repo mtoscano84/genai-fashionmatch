@@ -272,7 +272,7 @@ cp example-config.ini config.ini
 [CORE]
 PROJECT = genai-fashionmatch
 LOCATION = us-central1
-LANDING_REPO = landing-image-863363744101
+LANDING_REPO = landing-image-repo-863363744101
 CATALOG_REPO = catalog-repo-863363744101
 
 [CONNECTION]
