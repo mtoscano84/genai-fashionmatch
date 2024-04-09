@@ -63,7 +63,7 @@ gcloud compute networks subnets create $SUBNET_NAME \
 ```
 4- Create a Firewall rule to allow SSH to the Network:
 ```
-gcloud compute firewall-rules create allow-ssh-$VPC_NAME --network $VPC_NAME --allow tcp:22,tcp:3389,icmp --source-ranges 0.0.0.0
+gcloud compute firewall-rules create allow-ssh-$VPC_NAME --network $VPC_NAME --allow tcp:22,tcp:3389,icmp --source-ranges 0.0.0.0/0
 ```
 
 5. Create an allocated IP address range:
