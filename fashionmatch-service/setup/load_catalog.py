@@ -47,6 +47,7 @@ catalog_repo = variables.get("CORE","CATALOG_REPO")
 location = variables.get("CORE","LOCATION")
 table_name = "catalog"
 image_id = 1
+#seconds_per_job = variables.get("CORE","SECONDS_PER_JOB")
 seconds_per_job=2
 blob_uri_list = []
 
@@ -78,6 +79,7 @@ def generate_and_store_image_embedding(project, location, file_uri, image_id, ds
   image_embedding: typing.Sequence[float]
   image_emb_value = response.predictions[0]['imageEmbedding']
   image_embedding = [v for v in image_emb_value]
+#  logging.info(f"Image Embedding: {image_embedding}")
   time.sleep(seconds_per_job)
   result=asyncio.run(_load_embedding(table_name,image_name,image_embedding, image_id, ds))
 
@@ -160,6 +162,7 @@ async def init_database(ds) -> None:
   await ds.create_conn()
   await ds.initialize_db()
   await ds.insert_from_csv(csv_file_path, table_name, columns)
+  await ds.load_queries_table()
   await ds.close()
 
   logging.info("Database init done")
@@ -168,7 +171,7 @@ if __name__ == '__main__':
   ds = Datastore(None, config_file_path)
   asyncio.run(init_database(ds))
   image_uri_list = _list_gcs_bucket_objects(catalog_repo)
-  image_uri_list_filtered = image_uri_list[:100]
+  image_uri_list_filtered = image_uri_list[:98]
   for image in image_uri_list_filtered:
     generate_and_store_image_embedding(project, location, image, image_id, ds)
     image_id = image_id + 1
