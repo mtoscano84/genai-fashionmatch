@@ -85,6 +85,14 @@ class Datastore():
                 )
                 """
             )
+            await conn.execute(
+                """
+                CREATE TABLE queries(
+                MODE int, 
+                QUERY_TEXT text
+                )
+                """
+            )
 
     async def insert_from_csv(self, csv_file_path, table_name, columns):
         """
@@ -109,6 +117,28 @@ class Datastore():
 
         except (FileNotFoundError, asyncpg.PostgresError) as e:
             print(f"Error during CSV insertion: {e}")     
+    
+    async def load_queries_table(self):
+        """
+        Executes a series of SQL INSERT to the quieres table
+
+        """
+        queries = [
+            (1, 'SELECT path FROM catalog ORDER BY embedding <-> (SELECT embedding FROM image_lookup WHERE ID = $1) LIMIT 3'),
+            (2, 'SELECT path FROM catalog WHERE units != 0 and price < $2 ORDER BY embedding <-> (SELECT embedding FROM image_lookup WHERE ID = $1) LIMIT 3'),
+            (3, 'SELECT path FROM catalog WHERE units != 0 ORDER BY embedding <-> (SELECT embedding FROM image_lookup WHERE ID = $1) LIMIT 3'),
+            (4, 'SELECT path FROM catalog WHERE price < $2 ORDER BY embedding <-> (SELECT embedding FROM image_lookup WHERE ID = $1) LIMIT 3')
+        ]
+
+        async with self.__pool.acquire() as conn:
+            async with conn.cursor() as cur:
+                for mode, query_text in queries:
+                    try:
+                        await cur.execute("INSERT INTO queries (MODE, QUERY_TEXT) VALUES (%s, %s)", (mode, query_text))
+                    except Exception as e:
+                        print(f"Error inserting query for mode {mode}: {e}")  # Basic error handling
+
+                await conn.commit()    
 
     async def load_emb_to_db(self, table_name, image_name, image_embedding, image_id):
         """
@@ -172,14 +202,15 @@ class Datastore():
             return None
         return result
     
-    async def image_search(self, image_id):
+    async def image_search(self, image_id, max_price):
         """
         Get the top5 nearest image IDs from the catalog using a image_id from the image_lookup table
 
         :param int image_id: ID from the image_name
         :param list results: Lists of the top5 nearest image IDs
         """
-        results = await self.__pool.fetch(
+        if max_price == 0:
+            results = await self.__pool.fetch(
             """
             SELECT path
             FROM
@@ -193,14 +224,114 @@ class Datastore():
                 image_lookup
                 WHERE
                 ID = $1)
-            LIMIT 5
+            LIMIT 3
             """,
             image_id
-        )
+            )
+        else:
+            results = await self.__pool.fetch(
+            """
+            SELECT path
+            FROM
+                catalog
+            WHERE
+                 price < $2
+            ORDER BY
+                embedding
+            <-> 
+                (
+                SELECT embedding
+                FROM
+                image_lookup
+                WHERE
+                ID = $1)
+            LIMIT 3
+            """,
+            image_id, max_price
+            )
 
         if results is None:
             return None
-        return results           
+        return results 
+
+    async def image_search_in_stock_only(self, image_id, max_price):
+        """
+        Get the top5 nearest image IDs from the catalog using a image_id from the image_lookup table
+
+        :param int image_id: ID from the image_name
+        :param list results: Lists of the top5 nearest image IDs
+        """
+        if max_price == 0:
+            results = await self.__pool.fetch(
+            """
+            SELECT path
+            FROM
+                catalog
+            WHERE
+                units != 0 
+            ORDER BY
+                embedding
+            <-> 
+                (
+                SELECT embedding
+                FROM
+                image_lookup
+                WHERE
+                ID = $1)
+            LIMIT 3
+            """,
+            image_id
+            )
+        else:
+            results = await self.__pool.fetch(
+            """
+            SELECT path
+            FROM
+                catalog
+            WHERE
+                units != 0 and
+                price < $2
+            ORDER BY
+                embedding
+            <-> 
+                (
+                SELECT embedding
+                FROM
+                image_lookup
+                WHERE
+                ID = $1)
+            LIMIT 3
+            """,
+            image_id, max_price
+            )
+
+        if results is None:
+            return None
+        return results
+
+    async def get_sql_text(self, mode):
+        """
+        Get the top5 nearest image IDs from the catalog using a image_id from the image_lookup table
+
+        :param int image_id: ID from the image_name
+        :param list results: Lists of the top5 nearest image IDs
+        """
+        results = await self.__pool.fetchrow(
+            """
+            SELECT 
+                QUERY_TEXT
+            FROM
+                queries
+            WHERE
+                MODE = $1
+            """,
+            mode
+            )
+
+        if results is None:
+            return None
+        query_text = results[0]
+        return query_text                                          
 
     async def close(self):
         await self.__pool.close()

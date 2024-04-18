@@ -11,6 +11,8 @@ import logging
 import base64
 import re
 import typing
+import json
+import datetime
 #Flask imports
 from flask_cors import CORS
 from flask import Flask, request
@@ -48,6 +50,9 @@ def find_similar_images():
   location = request.args.get("location",type=str)
   image_name = request.args.get("image_name",type=str)
   landing_repo = request.args.get("landing_repo",type=str)
+  stock = request.args.get("stock",type=str)
+  max_price = request.args.get("max_price",type=int)
+
   # Read the image from the bucket in binary format
   image_bytes = _read_gcs_file_to_bytes (image_name, landing_repo)
   # Encode the image in string format
@@ -78,8 +83,17 @@ def find_similar_images():
   else:
     logging.info("The embedding image has been loadaed in the database")
     # Calculate the top 5 nearest vectors in the Database
-    image_path_results=asyncio.run(_find_image_match(image_id, ds))
+    image_path_results=asyncio.run(_find_image_match(image_id, stock, max_price, ds))
     return image_path_results
+
+@app.get("/get_query")
+def get_query():
+  mode = request.args.get("mode",type=int)
+
+  ds = Datastore(None, config_file_path)
+  query_text=asyncio.run(_show_query(mode, ds))
+  
+  return {"query_text": query_text}
 
 # Auxiliary Functions
 def _read_gcs_file_to_bytes(image_name, landing_repo):
@@ -123,7 +137,7 @@ async def _load_embedding(image_name, image_embedding, ds):
 
   return result
 
-async def _find_image_match(image_id, ds):
+async def _find_image_match(image_id, in_stock_only, max_price, ds):
   """
   Search for 5 matches on the catalog for the input image_id
 
@@ -131,11 +145,29 @@ async def _find_image_match(image_id, ds):
   :return list image_path_results: List of the 5 images matches
   """
   await ds.create_conn()
-  image_path_list=await ds.image_search(image_id)
+  if in_stock_only == "True":
+    image_path_list=await ds.image_search_in_stock_only(image_id, max_price)
+  else:
+    image_path_list=await ds.image_search(image_id, max_price)
+  
   image_path_results = [ e[0] for e in image_path_list ]
   await ds.close()
 
   return image_path_results
+
+async def _show_query(mode, ds):
+  """
+  Returns the QUERY TEXT executed to the Database
+
+  :params int max_price: Maximum price selected on the filter
+  :params boolean in_stock_only: Shows the value of the filter stock
+  :return jpeg image_arch: Image return
+  """
+  await ds.create_conn()
+  sql_query_text=await ds.get_sql_text(mode)
+  await ds.close() 
+
+  return sql_query_text
 
 if __name__ == "__main__":
     app.run(host="localhost", port=8080, debug=True)
