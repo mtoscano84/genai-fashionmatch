@@ -61,8 +61,10 @@ class Datastore():
             await conn.execute("CREATE EXTENSION IF NOT EXISTS vector")
             # If the table already exists, drop it to avoid conflicts
             await conn.execute("DROP TABLE IF EXISTS catalog CASCADE")
-           # If the table already exists, drop it to avoid conflicts
+            # If the table already exists, drop it to avoid conflicts
             await conn.execute("DROP TABLE IF EXISTS image_lookup CASCADE")
+            # If the table already exists, drop it to avoid conflicts
+            await conn.execute("DROP TABLE IF EXISTS queries CASCADE")
             # Create a new table
             await conn.execute(
                 """
@@ -116,29 +118,28 @@ class Datastore():
                         await conn.execute(query, *values)
 
         except (FileNotFoundError, asyncpg.PostgresError) as e:
-            print(f"Error during CSV insertion: {e}")     
-    
-    async def load_queries_table(self):
-        """
-        Executes a series of SQL INSERT to the quieres table
+            print(f"Error during CSV insertion: {e}")    
 
-        """
+    async def insert_queries(self):
         queries = [
-            (1, 'SELECT path FROM catalog ORDER BY embedding <-> (SELECT embedding FROM image_lookup WHERE ID = $1) LIMIT 3'),
-            (2, 'SELECT path FROM catalog WHERE units != 0 and price < $2 ORDER BY embedding <-> (SELECT embedding FROM image_lookup WHERE ID = $1) LIMIT 3'),
-            (3, 'SELECT path FROM catalog WHERE units != 0 ORDER BY embedding <-> (SELECT embedding FROM image_lookup WHERE ID = $1) LIMIT 3'),
-            (4, 'SELECT path FROM catalog WHERE price < $2 ORDER BY embedding <-> (SELECT embedding FROM image_lookup WHERE ID = $1) LIMIT 3')
+        (1, 'SELECT path FROM catalog ORDER BY embedding <-> (SELECT embedding FROM image_lookup WHERE ID = $1) LIMIT 3'),
+        (2, 'SELECT path FROM catalog WHERE units != 0 and price < $2 ORDER BY embedding <-> (SELECT embedding FROM image_lookup WHERE ID = $1) LIMIT 3'),
+        (3, 'SELECT path FROM catalog WHERE units != 0 ORDER BY embedding <-> (SELECT embedding FROM image_lookup WHERE ID = $1) LIMIT 3'),
+        (4, 'SELECT path FROM catalog WHERE price < $2 ORDER BY embedding <-> (SELECT embedding FROM image_lookup WHERE ID = $1) LIMIT 3')
         ]
 
         async with self.__pool.acquire() as conn:
-            async with conn.cursor() as cur:
+            async with conn.transaction():
                 for mode, query_text in queries:
                     try:
-                        await cur.execute("INSERT INTO queries (MODE, QUERY_TEXT) VALUES (%s, %s)", (mode, query_text))
+                        await conn.execute(
+                            "INSERT INTO queries (MODE, QUERY_TEXT) VALUES ($1, $2)",
+                            mode, query_text
+                        )
+                    except asyncpg.exceptions.UniqueViolationError as e:
+                        print(f"Unique constraint violation for mode {mode}: {e}")
                     except Exception as e:
-                        print(f"Error inserting query for mode {mode}: {e}")  # Basic error handling
-
-                await conn.commit()    
+                        print(f"Error inserting query for mode {mode}: {e}")
 
     async def load_emb_to_db(self, table_name, image_name, image_embedding, image_id):
         """

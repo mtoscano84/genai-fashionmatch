@@ -162,7 +162,7 @@ async def init_database(ds) -> None:
   await ds.create_conn()
   await ds.initialize_db()
   await ds.insert_from_csv(csv_file_path, table_name, columns)
-  await ds.load_queries_table()
+  await ds.insert_queries()
   await ds.close()
 
   logging.info("Database init done")
