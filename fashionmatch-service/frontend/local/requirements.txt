@@ -16,3 +16,4 @@ google-cloud-aiplatform
 scikit-learn
 jsonpickle
 asyncpg
+streamlit
