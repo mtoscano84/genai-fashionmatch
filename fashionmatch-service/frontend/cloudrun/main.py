@@ -34,7 +34,7 @@ catalog_repo = variables.get("CORE","CATALOG_REPO")
 result_img_list = []
 
 #API_URL="http://localhost:8080"
-API_URL="https://fashionmatch-backend-7cqkbo2tjq-uc.a.run.app"
+API_URL="https://fashionmatch-backend-tg5pwrohma-uc.a.run.app"
 GEN_DATA_EMB="/find_similar_images"
 GET_QUERY="/get_query"
 
@@ -52,7 +52,7 @@ def process_image(file_path, max_price, in_stock_only):
 
   stock = str(in_stock_only) 
   url = API_URL + GEN_DATA_EMB
-  response = requests.get(url, params={"project": project, "location": location, "image_name": image_name, "landing_repo": landing_repo, "in_stock_only": stock, "max_price": max_price})
+  response = requests.get(url, params={"project": project, "location": location, "image_name": image_name, "landing_repo": landing_repo, "stock": stock, "max_price": max_price})
 
   result_img_list = response.json()
   # Prepare output for Gradio in PIL format
