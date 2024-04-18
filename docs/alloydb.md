@@ -262,7 +262,7 @@ gcloud storage cp * gs://$BUCKET_NAME --project=$PROJECT_ID
 
 5. Make a copy of example-config.ini and name it config.ini
 ```
-genai-fashionmatch/fashionmatch-service/setup
+cd genai-fashionmatch/fashionmatch-service/setup
 cp example-config.ini config.ini
 ```
 
