@@ -288,6 +288,12 @@ password = "my-alloydb-pass"
 source load_db.sh
 ```
 
+8. Upload the architecture to GCS:
+```
+cd genai-fashionmatch/images
+gcloud storage cp fashion_item_recommendation_app.png gs://$BUCKET_NAME --project=$PROJECT_ID
+```
+
 ## Clean up resources
 Clean up after completing the demo.
 
