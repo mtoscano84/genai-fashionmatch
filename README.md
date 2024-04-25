@@ -91,7 +91,9 @@ To deploy the recommendation service, follow these instructions:
 [Deploy the Recommendation Service](docs/deploy_recommendation_service.md)
 
 ### Running the Recommendation Service
-Instructions for running app locally
+Start uploading a picture to get recommendations !
+
+[GenAI FashionStore](https://screencast.googleplex.com/api/gif/NTMzNDQ1OTY5NDk3MjkyOHw2YTBiZTFjOS0zMg/image)
 
 ### Clean up Resources
 [Instructions for cleaning up resources](./docs/clean_up.md)
