@@ -93,7 +93,7 @@ To deploy the recommendation service, follow these instructions:
 ### Running the Recommendation Service
 Start uploading a picture to get recommendations !
 
-![GenAI FashionStore](images/GenAIFashionStore-Demo.gif)
+![GenAI FashionStore](images/GenAI FashionStore - Demo Dark.gif)
 
 ### Clean up Resources
 [Instructions for cleaning up resources](./docs/clean_up.md)
