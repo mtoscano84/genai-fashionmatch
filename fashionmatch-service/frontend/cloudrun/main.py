@@ -169,14 +169,14 @@ def _extract_last_field(string):
 with gr.Blocks() as gradio_app:
     gr.Markdown(
     """
-    # Welcome to GenFashionStore
+    # Welcome to GenFashionStore 👕
     Start uploading an image to get recommendations !
 
-    ## Your Picture
+    ## Your Picture 📷
     """)
     with gr.Row(): 
         with gr.Column(scale=1):  # Fixed-width filter column
-            image = gr.Image(label="Upload your picture", type='filepath')
+            image = gr.Image(label="Upload your picture ", type='filepath')
             gr.Markdown(
             """ 
             ## Filters 
@@ -188,13 +188,13 @@ with gr.Blocks() as gradio_app:
                     price_range = gr.Slider(0, 300, label="Price Range", value=0)
                     in_stock_only = gr.Checkbox(label="In Stock Only", value=False)
                     near_me = gr.Checkbox(label="Near me", value=False)
-                    discount = gr.Checkbox(label="Discount", value=False)                  
+                    discount = gr.Checkbox(label="Special Prices", value=False)                  
             button1 = gr.Button("Search")
         with gr.Column(scale=3):  # Flexible results column
-            gr.Markdown(""" ## You might be interested in """)
+            gr.Markdown(""" ## You might be interested in 🧣🧤👜 """)
             with gr.Row():
               output_images = gr.Gallery(label="Similar items", preview=True, format="jpeg")
-            gr.Markdown(""" ## Under the hood """)
+            gr.Markdown(""" ## Under the hood 🔗 """)
             button2 = gr.Button("Show me") 
             image_output = gr.Image(label="Architecture", visible=True)
             output_text = gr.Textbox(label="Query")
